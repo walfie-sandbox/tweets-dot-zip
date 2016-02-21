@@ -11,13 +11,27 @@ object Example extends js.JSApp {
     val data = js.Dynamic.global.Grailbird.data
       .asInstanceOf[js.Dictionary[js.Array[Tweet]]]
 
-    loadJs("data/js/tweets/2015_12.js") { _ =>
-      val dataForMonth: js.Array[Tweet] = data.getOrElse("tweets_2015_12", js.Array())
+    loadJs("data/js/tweets/2015_11.js") { _ =>
+      val dataForMonth: js.Array[Tweet] = data("tweets_2015_11")
 
-      dataForMonth.foreach { tweet: Tweet =>
-        val div: Element = document.createElement("div")
-        div.innerHTML = tweet.text
-        document.body.appendChild(div)
+      val tweetsByHour: Map[Int, Int] = dataForMonth
+        .groupBy(_.createdAtDate.getHours)
+        .mapValues(_.size)
+
+      val table = document.createElement("table")
+      document.body.appendChild(table)
+
+      tweetsByHour.toSeq.sortBy(_._1).foreach {
+        case (hour: Int, count: Int) =>
+          val row = document.createElement("tr")
+          val hourCell = document.createElement("td")
+          hourCell.innerHTML = hour.toString
+          val countCell = document.createElement("td")
+          countCell.innerHTML = count.toString
+
+          row.appendChild(hourCell)
+          row.appendChild(countCell)
+          table.appendChild(row)
       }
     }
   }
