@@ -6,7 +6,7 @@ import scala.scalajs.js.annotation.JSName
 package models {
   /** data/js/tweet_index.js */
   @js.native
-  class TweetsFile extends js.Object {
+  class TweetIndexItem extends js.Object {
     val year: Int = js.native
     val month: Int = js.native
     @JSName("file_name") val fileName: String = js.native

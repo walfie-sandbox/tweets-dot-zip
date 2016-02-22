@@ -4,18 +4,21 @@ import org.scalajs.dom.document
 import org.scalajs.dom.raw.Element
 import scala.scalajs.js
 import walfie.tweets.models._
-import walfie.tweets.util.loadJs
+import walfie.tweets.util.Loader
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Example extends js.JSApp {
   def main(): Unit = {
+    val loader = new Loader(".")
     val data = js.Dynamic.global.Grailbird.data
       .asInstanceOf[js.Dictionary[js.Array[Tweet]]]
 
-    loadJs("data/js/tweets/2015_11.js").map { _ =>
-      val dataForMonth: js.Array[Tweet] = data("tweets_2015_11")
-
-      val tweetsByHour: Map[Int, Int] = dataForMonth
+    val f = for {
+      files <- loader.loadTweetsIndex()
+      fileData = files.head
+      tweets <- loader.loadTweets(fileData.fileName, fileData.varName)
+    } yield {
+      val tweetsByHour: Map[Int, Int] = tweets
         .groupBy(_.createdAtDate.getHours)
         .mapValues(_.size)
 
@@ -34,6 +37,10 @@ object Example extends js.JSApp {
           row.appendChild(countCell)
           table.appendChild(row)
       }
+    }
+
+    f.onFailure {
+      case e => println(e)
     }
   }
 }
