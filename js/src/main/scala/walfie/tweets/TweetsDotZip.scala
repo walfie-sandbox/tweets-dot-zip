@@ -5,13 +5,14 @@ import org.scalajs.dom.raw.Element
 import scala.scalajs.js
 import walfie.tweets.models._
 import walfie.tweets.util.loadJs
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Example extends js.JSApp {
   def main(): Unit = {
     val data = js.Dynamic.global.Grailbird.data
       .asInstanceOf[js.Dictionary[js.Array[Tweet]]]
 
-    loadJs("data/js/tweets/2015_11.js") { _ =>
+    loadJs("data/js/tweets/2015_11.js").map { _ =>
       val dataForMonth: js.Array[Tweet] = data("tweets_2015_11")
 
       val tweetsByHour: Map[Int, Int] = dataForMonth
