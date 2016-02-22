@@ -1,11 +1,13 @@
 package walfie.tweets
 
+import japgolly.scalajs.react._
 import org.scalajs.dom.document
-import org.scalajs.dom.raw.Element
+import org.scalajs.dom.raw.{Element, Event}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
 import walfie.tweets.models._
 import walfie.tweets.util.Loader
-import scala.concurrent.ExecutionContext.Implicits.global
+import walfie.tweets.views.components._
 
 object Example extends js.JSApp {
   def main(): Unit = {
@@ -13,34 +15,20 @@ object Example extends js.JSApp {
     val data = js.Dynamic.global.Grailbird.data
       .asInstanceOf[js.Dictionary[js.Array[Tweet]]]
 
+    val contentDiv = document.createElement("div")
+    document.body.appendChild(contentDiv)
+
     val f = for {
       files <- loader.loadTweetsIndex()
-      fileData = files.head
+      fileData = files.find(_.fileName.contains("2015_08")).get // Testing on a large dataset. TODO: remove
       tweets <- loader.loadTweets(fileData.fileName, fileData.varName)
     } yield {
-      val tweetsByHour: Map[Int, Int] = tweets
-        .groupBy(_.createdAtDate.getHours)
-        .mapValues(_.size)
-
-      val table = document.createElement("table")
-      document.body.appendChild(table)
-
-      tweetsByHour.toSeq.sortBy(_._1).foreach {
-        case (hour: Int, count: Int) =>
-          val row = document.createElement("tr")
-          val hourCell = document.createElement("td")
-          hourCell.innerHTML = hour.toString
-          val countCell = document.createElement("td")
-          countCell.innerHTML = count.toString
-
-          row.appendChild(hourCell)
-          row.appendChild(countCell)
-          table.appendChild(row)
-      }
+      val root = TweetList(tweets, "RT.*")
+      ReactDOM.render(root, contentDiv)
     }
 
     f.onFailure {
-      case e => println(e)
+      case e => js.Dynamic.global.console.error(e.toString)
     }
   }
 }
