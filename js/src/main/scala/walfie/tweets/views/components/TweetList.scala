@@ -7,13 +7,13 @@ import walfie.tweets.models
 object TweetList {
   case class Props(
     tweets: Seq[models.Tweet],
-    regex: String
+    query: String
   )
 
   val component = ReactComponentB[Props]("TweetList").render_P { p: Props =>
     <.ul(
       for {
-        tweet <- p.tweets if tweet.text.matches(p.regex)
+        tweet <- p.tweets if tweet.text.contains(p.query)
       } yield {
         <.li(Tweet(tweet))
       }
@@ -22,7 +22,7 @@ object TweetList {
 
   def apply(
     tweets: Seq[models.Tweet],
-    regex: String
-  ): ReactElement = component(Props(tweets, regex))
+    query: String
+  ): ReactElement = component(Props(tweets, query))
 }
 

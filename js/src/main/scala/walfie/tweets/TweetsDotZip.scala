@@ -20,10 +20,10 @@ object Example extends js.JSApp {
 
     val f = for {
       files <- loader.loadTweetsIndex()
-      fileData = files.find(_.fileName.contains("2015_08")).get // Testing on a large dataset. TODO: remove
+      fileData = files.head // TODO: Allow month selection
       tweets <- loader.loadTweets(fileData.fileName, fileData.varName)
     } yield {
-      val root = TweetList(tweets, "RT.*")
+      val root = Root(files, tweets)
       ReactDOM.render(root, contentDiv)
     }
 

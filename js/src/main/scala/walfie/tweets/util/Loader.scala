@@ -10,11 +10,13 @@ import walfie.tweets.models._
 class Loader(baseUrl: String = ".") {
   private val _baseUrl = if (baseUrl.isEmpty) "." else baseUrl
 
+  private def fullUrl(path: String) = _baseUrl + "/" + path
+
   private def loadJs(path: String): Future[Event] = {
     val p: Promise[Event] = Promise()
 
     val script = document.createElement("script").asInstanceOf[HTMLScriptElement]
-    script.src = _baseUrl + "/" + path
+    script.src = fullUrl(path)
     script.onload = (e: Event) => p.success(e)
     document.body.appendChild(script)
 
