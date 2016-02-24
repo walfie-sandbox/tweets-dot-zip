@@ -29,7 +29,7 @@ class Loader(baseUrl: String = ".") {
     dynamicOpt.fold {
       loadJs(path).map { _ =>
         dynamicOpt.getOrElse {
-          throw new NoSuchElementException("Could not load " + path)
+          throw new NoSuchElementException("Could not load variable from " + path)
         }
       }
     }(Future.successful)
@@ -40,13 +40,17 @@ class Loader(baseUrl: String = ".") {
   }
 
   def loadTweets(fileName: String, varName: String): Future[js.Array[Tweet]] = {
-    val data = js.Dynamic.global.Grailbird.data
-      .asInstanceOf[js.Dictionary[js.Array[Tweet]]]
+    import js.Dynamic.{global => g, literal}
+
+    // Initialize "Grailbird" global variable if undefined
+    g.Grailbird = g.Grailbird || literal(data = literal())
+
+    val data = g.Grailbird.data.asInstanceOf[js.Dictionary[js.Array[Tweet]]]
 
     data.get(varName) match {
       case Some(v) => Future.successful(v)
       case None => loadJs(fileName).map { _ =>
-        data.getOrElse(varName, throw new NoSuchElementException("Could not find " + varName))
+        data.getOrElse(varName, throw new NoSuchElementException(s"Could not load `$varName` from $fileName"))
       }
     }
   }

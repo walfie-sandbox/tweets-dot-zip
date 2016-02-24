@@ -12,8 +12,6 @@ import walfie.tweets.views.components._
 object Example extends js.JSApp {
   def main(): Unit = {
     val loader = new Loader(".")
-    val data = js.Dynamic.global.Grailbird.data
-      .asInstanceOf[js.Dictionary[js.Array[Tweet]]]
 
     val contentDiv = document.createElement("div")
     document.body.appendChild(contentDiv)
