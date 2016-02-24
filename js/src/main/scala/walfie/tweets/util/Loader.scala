@@ -35,7 +35,7 @@ class Loader(baseUrl: String = ".") {
     }(Future.successful)
   }
 
-  def loadTweetsIndex(): Future[js.Array[TweetIndexItem]] = {
+  def loadTweetsIndex(): Future[js.Array[TweetIndexMonth]] = {
     loadDynamic("data/js/tweet_index.js", () => js.Dynamic.global.tweet_index)
   }
 

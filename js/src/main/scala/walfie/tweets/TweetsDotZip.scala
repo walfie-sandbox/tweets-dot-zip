@@ -5,12 +5,16 @@ import org.scalajs.dom.document
 import org.scalajs.dom.raw.{Element, Event}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
+import scalacss.Defaults._
+import scalacss.ScalaCssReact._
 import walfie.tweets.models._
 import walfie.tweets.util.Loader
 import walfie.tweets.views.components._
+import walfie.tweets.views.styles.Styles
 
 object Example extends js.JSApp {
   def main(): Unit = {
+    Styles.addToDocument()
     val loader = new Loader(".")
 
     val contentDiv = document.createElement("div")

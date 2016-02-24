@@ -2,30 +2,32 @@ package walfie.tweets.views.components
 
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
+import scalacss.ScalaCssReact._
 import walfie.tweets.models
+import walfie.tweets.views.styles.Styles
 
-object TweetIndexItem {
+object TweetIndexMonth {
   case class Props(
-    item: models.TweetIndexItem,
+    item: models.TweetIndexMonth,
     maxTweetCount: Int
   )
 
   // TODO: Remove these magic values and actually write some CSS
-  val component = ReactComponentB[Props]("TweetIndexItem").render_P { p: Props =>
+  val component = ReactComponentB[Props]("TweetIndexMonth").render_P { p: Props =>
     val percentage = p.item.tweetCount.toFloat / p.maxTweetCount
 
-    <.div(
-      ^.key := p.item.varName,
-      ^.display := "inline-block",
-      ^.background := "#94ddf8",
-      ^.margin := "1px",
-      ^.width := 20,
-      ^.height := (30 * percentage).toInt
+    <.li(
+      Styles.TweetIndex.monthContainer,
+      <.div(
+        ^.key := p.item.varName,
+        Styles.TweetIndex.monthFilled,
+        ^.height := s"${percentage * 100}%"
+      )
     )
   }.build
 
   def apply(
-    item: models.TweetIndexItem,
+    item: models.TweetIndexMonth,
     maxTweetCount: Int
   ): ReactElement = component(Props(item, maxTweetCount))
 }

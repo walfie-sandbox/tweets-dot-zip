@@ -6,7 +6,7 @@ import walfie.tweets.models
 
 object Root {
   case class Props(
-    tweetIndex: Seq[models.TweetIndexItem],
+    tweetIndex: Seq[models.TweetIndexMonth],
     tweets: Seq[models.Tweet]
   )
 
@@ -18,7 +18,7 @@ object Root {
   }.build
 
   def apply(
-    tweetIndex: Seq[models.TweetIndexItem],
+    tweetIndex: Seq[models.TweetIndexMonth],
     tweets: Seq[models.Tweet]
   ): ReactElement = component(Props(tweetIndex, tweets))
 }
