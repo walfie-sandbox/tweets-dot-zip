@@ -1,7 +1,7 @@
 package walfie.tweets.util
 
 import org.scalajs.dom.document
-import org.scalajs.dom.raw.{Event, HTMLScriptElement}
+import org.scalajs.dom.raw.{Event, HTMLScriptElement, WorkerGlobalScope}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.scalajs.js
@@ -12,13 +12,21 @@ class Loader(baseUrl: String = ".") {
 
   private def fullUrl(path: String) = _baseUrl + "/" + path
 
-  private def loadJs(path: String): Future[Event] = {
-    val p: Promise[Event] = Promise()
+  private def loadJs(path: String): Future[Unit] = {
+    import js.Dynamic.global
 
-    val script = document.createElement("script").asInstanceOf[HTMLScriptElement]
-    script.src = fullUrl(path)
-    script.onload = (e: Event) => p.success(e)
-    document.body.appendChild(script)
+    val p: Promise[Unit] = Promise()
+    val src: String = fullUrl(path)
+
+    if (global.WorkerGlobalScope.asInstanceOf[js.UndefOr[WorkerGlobalScope]].isDefined) {
+      global.importScripts(src)
+      p.success(())
+    } else {
+      val script = document.createElement("script").asInstanceOf[HTMLScriptElement]
+      script.src = fullUrl(path)
+      script.onload = (e: Event) => p.success(())
+      document.body.appendChild(script)
+    }
 
     p.future
   }

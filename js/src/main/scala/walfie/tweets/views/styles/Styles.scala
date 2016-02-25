@@ -5,8 +5,6 @@ import scalacss.Defaults._
 object Styles extends StyleSheet.Inline {
   import dsl._
 
-  val cssReset = style(scalacss.ext.CssReset.normaliseCss)
-
   object TweetIndex {
     val monthContainer = style(
       backgroundColor(c"#f3f3f3"),

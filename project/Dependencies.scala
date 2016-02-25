@@ -20,7 +20,7 @@ object Dependencies {
     "com.github.japgolly.scalacss" %%% "ext-react" % Versions.scalaCss,
     "com.github.japgolly.scalajs-react" %%% "core" % Versions.scalaJsReact,
     "com.github.japgolly.scalajs-react" %%% "extra" % Versions.scalaJsReact,
-    "org.scala-js" %%% "scalajs-dom" % "0.8.2"
+    "org.scala-js" %%% "scalajs-dom" % "0.9.0"
   )
 
   lazy val jsNative = jsDependencies ++= Seq(
