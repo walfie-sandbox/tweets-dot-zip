@@ -22,14 +22,22 @@ var baseUrl = (function() {
 }());
 
 worker.onmessage = function(e) {
-  console.log(e.data.created_at + ' ' + e.data.text);
+  e.data.data.forEach(function(tweet) {
+    console.log(tweet.created_at + ' ' + tweet.text);
+  })
 };
 
 // Send the worker the path to load the script from
 worker.postMessage({ baseUrl: baseUrl });
 
 function search(searchTerm) {
-  worker.postMessage(searchTerm);
+  worker.postMessage({
+    streamId: 0,
+    requestType: 0,
+    data: {
+      regex: searchTerm
+    }
+  });
 };
 </script>
 
