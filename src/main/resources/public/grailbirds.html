@@ -1,0 +1,35 @@
+<script>
+function createWebWorkerFromFunction(f) {
+  var blobContents = ['(', f.toString(), ')();'];
+  var blob = new Blob(blobContents, { type: 'application/javascript'});
+  var blobUrl = URL.createObjectURL(blob);
+  var worker = new Worker(blobUrl);
+  URL.revokeObjectURL(blobUrl);
+  return worker;
+}
+
+var worker = createWebWorkerFromFunction(function() {
+  self.onmessage = function(e) {
+    self.importScripts(e.data.baseUrl + 'grailbirds-fastopt.js');
+    GrailbirdsWorker().init(self, e.data.baseUrl);
+  };
+});
+
+var baseUrl = (function() {
+  var parts = document.location.href.split('/');
+  parts[parts.length - 1] = '';
+  return parts.join('/');
+}());
+
+worker.onmessage = function(e) {
+  console.log(e.data.created_at + ' ' + e.data.text);
+};
+
+// Send the worker the path to load the script from
+worker.postMessage({ baseUrl: baseUrl });
+
+function search(searchTerm) {
+  worker.postMessage(searchTerm);
+};
+</script>
+
