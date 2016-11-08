@@ -1,3 +1,4 @@
+<script src="grailbirds-fastopt.js"></script>
 <script>
 function createWebWorkerFromFunction(f) {
   var blobContents = ['(', f.toString(), ')();'];
@@ -21,6 +22,10 @@ var baseUrl = (function() {
   return parts.join('/');
 }());
 
+
+GrailbirdsClient().init(worker);
+
+/*
 worker.onmessage = function(e) {
   e.data.data.forEach(function(tweet) {
     console.log(tweet.created_at + ' ' + tweet.text);
@@ -39,5 +44,6 @@ function search(searchTerm) {
     }
   });
 };
+*/
 </script>
 
