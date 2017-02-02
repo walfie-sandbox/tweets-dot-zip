@@ -22,6 +22,7 @@ var baseUrl = (function() {
   return parts.join('/');
 }());
 
+worker.postMessage({ baseUrl: baseUrl });
 
 GrailbirdsClient().init(worker);
 
@@ -33,7 +34,6 @@ worker.onmessage = function(e) {
 };
 
 // Send the worker the path to load the script from
-worker.postMessage({ baseUrl: baseUrl });
 
 function search(searchTerm) {
   worker.postMessage({

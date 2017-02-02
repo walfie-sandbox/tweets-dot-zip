@@ -1,34 +1,43 @@
 package walfie.grailbirds.protocol
 
-import boopickle.Default._
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
 import walfie.grailbirds.domain._
 
-case class ClientMessage[T <: Request[_]](
-  streamId: Int,
-  data:     T
-)
-
-sealed trait Request[T <: Response]
-object Request {
-  implicit val pickler: Pickler[Request] = generatePickler[Request]
-  case class Search(
-    regex: String
-  ) extends Request[Response.Search]
+@ScalaJSDefined
+trait Message extends js.Object {
+  val streamId: Int
 }
 
-case class WorkerMessage[T <: Response](
-  streamId: Int,
-  data:     T
-)
+object MessageType {
+  val Search = 0
+}
 
-sealed trait Response
-object Response {
-  implicit val pickler: Pickler[Response] = generatePickler[Response]
+@ScalaJSDefined
+sealed trait ClientMessage[ResponseT <: js.Any] extends Message {
+  val `type`: Int
+}
 
-  case class Search(
-    tweets: Seq[Tweet]
-  ) extends Response
+object ClientMessage {
+  @ScalaJSDefined
+  class Search(
+    val streamId: Int,
+    val regex:    String
+  ) extends ClientMessage[js.Array[Tweet]] {
+    val `type` = MessageType.Search
+  }
+
+  def from(obj: js.Object): ClientMessage[_] = {
+    import walfie.grailbirds.protocol.{MessageType => MT}
+
+    obj.asInstanceOf[ClientMessage[js.Any]].`type` match {
+      case MT.Search => obj.asInstanceOf[ClientMessage.Search]
+    }
+  }
+}
+
+@ScalaJSDefined
+trait WorkerMessage[T <: js.Any] extends Message {
+  val data: T
 }
 

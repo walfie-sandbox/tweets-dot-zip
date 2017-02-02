@@ -23,7 +23,6 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "com.thoughtworks.binding" %%% "dom" % "9.0.4",
       "io.monix" %%% "monix" % "2.0.6",
-      "me.chrons" %%% "boopickle" % "1.2.5",
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"
     )
   )

@@ -1,7 +1,5 @@
 package walfie.grailbirds.worker
 
-import boopickle.Default._
-import java.nio.ByteBuffer
 import org.scalajs.dom.raw._
 import scala.concurrent.duration._
 import scala.scalajs.js
@@ -25,20 +23,23 @@ class GrailbirdsWorker(scope: DedicatedWorkerGlobalScope, baseUrl: String) {
   val grailbird = new Grailbird(scope, baseUrl)
 
   scope.onmessage = { e: MessageEvent =>
-    val message = Unpickle[ClientMessage[_]].fromBytes(e.data.asInstanceOf[ByteBuffer])
+    val message = ClientMessage.from(e.data.asInstanceOf[js.Object])
 
-    message.data match {
-      case req: Request.Search =>
+    message match {
+      case req: ClientMessage.Search =>
         val regex = js.RegExp(req.regex, "im")
 
         grailbird.allTweetsObservable
           .filter(tweet => regex.test(tweet.text))
           .bufferTimedAndCounted(100.millis, 10)
           .foreach { tweets =>
-            val out = WorkerMessage(message.streamId, Response.Search(tweets))
-            val outBytes = Pickle.intoBytes(out)
-            scope.postMessage(outBytes, js.Array(outBytes))
+            val out = new WorkerMessage[js.Array[Tweet]] {
+              val streamId = req.streamId
+              val data = tweets.toJSArray
+            }
+            scope.postMessage(out)
           }
+      case x => println(js.JSON.stringify(x))
     }
   }
 }
